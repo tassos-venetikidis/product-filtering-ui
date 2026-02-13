@@ -110,21 +110,18 @@ function displayProductToDOM(product) {
 }
 
 function handleProductClick(e) {
-  if (e.target.tagName === "SPAN" || e.target.tagName === "IMG") {
-    const item = e.target.closest(".item");
-    const itemBtn = item.querySelector(".status");
+  if (e.target.tagName === "SPAN") {
+    const itemBtn = e.target;
     if (itemBtn.textContent === "Add To Cart") {
       cartItemsCount++;
+      itemBtn.classList.remove("bg-black");
+      itemBtn.classList.add("bg-red-600");
       itemBtn.textContent = "Remove From Cart";
-      itemBtn.style.backgroundColor = "red";
-      // itemBtn.classList.remove("bg-black");
-      // itemBtn.classList.add("bg-red");
     } else {
       cartItemsCount--;
+      itemBtn.classList.remove("bg-red-600");
+      itemBtn.classList.add("bg-black");
       itemBtn.textContent = "Add To Cart";
-      itemBtn.style.backgroundColor = "";
-      // itemBtn.classList.remove("bg-red");
-      // itemBtn.classList.add("bg-black");
     }
     cartCount.textContent = cartItemsCount;
   }

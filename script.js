@@ -76,12 +76,7 @@ const products = [
 const searchInput = document.getElementById("search");
 const cartBtn = document.getElementById("cart-button");
 const cartCount = document.getElementById("cart-count");
-const filtersContainer = document.getElementById("filters-container");
 const checkEls = document.querySelectorAll(".check");
-// const camerasCheck = document.getElementById("cameras");
-// const smartphonesCheck = document.getElementById("smartphones");
-// const gamesCheck = document.getElementById("games");
-// const televisionsCheck = document.getElementById("televisions");
 const productsWrapper = document.getElementById("products-wrapper");
 
 function displayProductToDOM(product) {
@@ -127,31 +122,29 @@ function handleProductClick(e) {
   }
 }
 
-function filterProducts(category = "") {
+function filterProducts() {
   const text = searchInput.value.trim().toLowerCase();
-  if (!category) {
-    checkEls.forEach((checkEl) => {
-      if (checkEl.checked) {
-        category = checkEl.id;
-      }
-    });
-  }
+  const categories = [];
+  checkEls.forEach((checkEl) => {
+    if (checkEl.checked) categories.push(checkEl.id);
+  });
+
   productsWrapper.innerHTML = "";
   let filteredProductEls;
 
-  if (text && category) {
+  if (text && categories.length > 0) {
     filteredProductEls = productEls.filter(
       (product) =>
         product.querySelector("p").textContent.toLowerCase().includes(text) &&
-        product.dataset.category === category,
+        categories.includes(product.dataset.category),
     );
-  } else if (text) {
+  } else if (text && categories.length === 0) {
     filteredProductEls = productEls.filter((product) =>
       product.querySelector("p").textContent.toLowerCase().includes(text),
     );
-  } else if (category) {
-    filteredProductEls = productEls.filter(
-      (product) => product.dataset.category === category,
+  } else if (!text && categories.length > 0) {
+    filteredProductEls = productEls.filter((product) =>
+      categories.includes(product.dataset.category),
     );
   } else {
     filteredProductEls = productEls;
@@ -168,16 +161,8 @@ products.forEach((product) => displayProductToDOM(product));
 
 productsWrapper.addEventListener("click", handleProductClick);
 
-searchInput.addEventListener("input", (e) => filterProducts());
+searchInput.addEventListener("input", filterProducts);
 
 checkEls.forEach((checkEl) =>
-  checkEl.addEventListener("change", (e) => {
-    checkEls.forEach((checkEl) => {
-      if (checkEl.id !== e.target.id) {
-        checkEl.checked = false;
-      }
-    });
-    if (!e.target.checked) return filterProducts();
-    filterProducts(e.target.id);
-  }),
+  checkEl.addEventListener("change", filterProducts),
 );
